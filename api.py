@@ -6,6 +6,7 @@ from flask_httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as pwd_context
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
+from flask_cors import *
 
 # initialization
 app = Flask(__name__)
@@ -16,7 +17,7 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 # extensions
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
-
+CORS(app, supports_credentials=True)
 
 class User(db.Model):
     __tablename__ = 'users'
