@@ -17,7 +17,7 @@ app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 # extensions
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
-CORS(app, supports_credentials=True)
+CORS(app, resources=r'/api/*')
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -60,9 +60,6 @@ def verify_password(username_or_token, password):
     g.user = user
     return True
 
-def jsonp(obj):
-    return 'cp('+jsonify(obj)+')'
-
 @app.route('/api/new_user', methods=['POST'])
 def new_user():
     username = request.json.get('username')
@@ -75,7 +72,7 @@ def new_user():
     user.hash_password(password)
     db.session.add(user)
     db.session.commit()
-    return (jsonp({'username': user.username}), 201,
+    return (jsonify({'username': user.username}), 201,
             {'Location': url_for('get_user', id=user.id, _external=True)})
 
 
@@ -84,20 +81,20 @@ def get_user(id):
     user = User.query.get(id)
     if not user:
         abort(400)
-    return jsonp({'username': user.username})
+    return jsonify({'username': user.username})
 
 
 @app.route('/api/token')
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(600)
-    return jsonp({'token': token.decode('ascii'), 'duration': 600})
+    return jsonify({'token': token.decode('ascii'), 'duration': 600})
 
 
 @app.route('/api/resource')
 @auth.login_required
 def get_resource():
-    return jsonp({'data': 'Hello, %s!' % g.user.username})
+    return jsonify({'data': 'Hello, %s!' % g.user.username})
 
 
 if __name__ == '__main__':
