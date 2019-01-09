@@ -88,7 +88,7 @@ def get_users():
     users = User.query.all()
     payload = []
     for result in users:
-       content = {'id': result.id, 'username': result.username, 'password': result.password}
+       content = {'id': result.id, 'username': result.username, 'password': result.password_hash}
        payload.append(content)
     return jsonify(payload)
 
