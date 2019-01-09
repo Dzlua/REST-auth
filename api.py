@@ -83,6 +83,9 @@ def get_user(id):
         abort(400)
     return jsonify({'username': user.username})
 
+@app.route('/api/users')
+def get_users():
+    return jsonify(User.query.all())
 
 @app.route('/api/token')
 @auth.login_required
