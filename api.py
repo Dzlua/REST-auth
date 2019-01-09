@@ -85,7 +85,12 @@ def get_user(id):
 
 @app.route('/api/users')
 def get_users():
-    return jsonify(User.query.all())
+    users = User.query.all()
+    payload = []
+    for result in users:
+       content = {'id': result[0], 'username': result[1], 'password': result[2]}
+       payload.append(content)
+    return jsonify(payload)
 
 @app.route('/api/token')
 @auth.login_required
